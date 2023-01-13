@@ -69,11 +69,9 @@ load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 
 gazelle_dependencies()
 
-load(
-    "//tools/build_defs:go_externals.bzl",
-    "go_externals",
-)
+load("//:tools/build_defs/go_externals.bzl", "go_externals")
 
+# gazelle:repository_macro tools/build_defs/go_externals.bzl%go_externals
 go_externals()
 
 http_archive(

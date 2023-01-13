@@ -6,10 +6,10 @@ go_library(
         "backend.go",
         "livegrep_backend.go",
     ],
+    importpath = "github.com/livegrep/livegrep/server/backend",
+    visibility = ["//visibility:public"],
     deps = [
         "//src/proto:go_proto",
         "@org_golang_google_grpc//:go_default_library",
     ],
-    importpath = "github.com/livegrep/livegrep/server/backend",
-    visibility = ["//visibility:public"],
 )

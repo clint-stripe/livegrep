@@ -15,7 +15,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v31/github"
 	"github.com/livegrep/livegrep/src/proto/config"
 
 	"golang.org/x/net/context"
