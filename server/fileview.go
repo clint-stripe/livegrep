@@ -29,6 +29,7 @@ var extToLangMap map[string]string = map[string]string{
 	".c":           "c",
 	".coffee":      "coffeescript",
 	".cpp":         "cpp",
+	".cc":          "cpp",
 	".css":         "css",
 	".go":          "go",
 	".h":           "cpp",
