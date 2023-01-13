@@ -17,6 +17,7 @@ import (
 	"github.com/bmizerany/pat"
 	libhoney "github.com/honeycombio/libhoney-go"
 
+	"github.com/livegrep/livegrep/server/backend"
 	"github.com/livegrep/livegrep/server/config"
 	"github.com/livegrep/livegrep/server/log"
 	"github.com/livegrep/livegrep/server/reqid"
@@ -38,7 +39,7 @@ type page struct {
 
 type server struct {
 	config      *config.Config
-	bk          map[string]*Backend
+	bk          map[string]*backend.Backend
 	bkOrder     []string
 	repos       map[string]config.RepoConfig
 	inner       http.Handler
@@ -81,7 +82,7 @@ func (s *server) ServeRoot(ctx context.Context, w http.ResponseWriter, r *http.R
 
 func (s *server) ServeSearch(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	urls := make(map[string]map[string]string, len(s.bk))
-	backends := make([]*Backend, 0, len(s.bk))
+	backends := make([]*backend.Backend, 0, len(s.bk))
 	sampleRepo := ""
 	for _, bkId := range s.bkOrder {
 		bk := s.bk[bkId]
@@ -111,7 +112,7 @@ func (s *server) ServeSearch(ctx context.Context, w http.ResponseWriter, r *http
 		ScriptData:    script_data,
 		IncludeHeader: true,
 		Data: struct {
-			Backends   []*Backend
+			Backends   []*backend.Backend
 			SampleRepo string
 		}{
 			Backends:   backends,
@@ -302,7 +303,7 @@ func (s *server) Handler(f func(c context.Context, w http.ResponseWriter, r *htt
 func New(cfg *config.Config) (http.Handler, error) {
 	srv := &server{
 		config: cfg,
-		bk:     make(map[string]*Backend),
+		bk:     make(map[string]*backend.Backend),
 		repos:  make(map[string]config.RepoConfig),
 	}
 	srv.loadTemplates()
@@ -316,7 +317,13 @@ func New(cfg *config.Config) (http.Handler, error) {
 	}
 
 	for _, bk := range srv.config.Backends {
-		be, e := NewBackend(bk.Id, bk.Addr)
+		var be *backend.Backend
+		var e error
+		if bk.ZoektBackend {
+			continue
+		} else {
+			be, e = backend.NewBackend(bk.Id, bk.Addr)
+		}
 		if e != nil {
 			return nil, e
 		}

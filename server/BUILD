@@ -5,7 +5,6 @@ go_library(
     name = "go_default_library",
     srcs = [
         "api.go",
-        "backend.go",
         "fileview.go",
         "json.go",
         "query.go",
@@ -21,6 +20,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//server/api:go_default_library",
+        "//server/backend:go_default_library",
         "//server/config:go_default_library",
         "//server/log:go_default_library",
         "//server/reqid:go_default_library",

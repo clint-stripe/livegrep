@@ -5,8 +5,9 @@ import (
 )
 
 type Backend struct {
-	Id   string `json:"id"`
-	Addr string `json:"addr"`
+	Id           string `json:"id"`
+	Addr         string `json:"addr"`
+	ZoektBackend bool   `json:"zoekt_backend"`
 }
 
 type Honeycomb struct {

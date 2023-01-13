@@ -16,6 +16,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/livegrep/livegrep/server/api"
+	"github.com/livegrep/livegrep/server/backend"
 	"github.com/livegrep/livegrep/server/log"
 	"github.com/livegrep/livegrep/server/reqid"
 
@@ -121,7 +122,7 @@ func stringSlice(ss []string) []string {
 	return []string{}
 }
 
-func (s *server) doSearch(ctx context.Context, backend *Backend, q *pb.Query) (*api.ReplySearch, error) {
+func (s *server) doSearch(ctx context.Context, backend *backend.Backend, q *pb.Query) (*api.ReplySearch, error) {
 	var search *pb.CodeSearchResult
 	var err error
 
@@ -134,10 +135,7 @@ func (s *server) doSearch(ctx context.Context, backend *Backend, q *pb.Query) (*
 		ctx = metadata.AppendToOutgoingContext(ctx, "Request-Id", string(id))
 	}
 
-	search, err = backend.Codesearch.Search(
-		ctx, q,
-		grpc.FailFast(false),
-	)
+	search, err = backend.Search(ctx, q)
 	if err != nil {
 		log.Printf(ctx, "error talking to backend err=%s", err)
 		return nil, err
@@ -189,7 +187,7 @@ func (s *server) doSearch(ctx context.Context, backend *Backend, q *pb.Query) (*
 
 func (s *server) ServeAPISearch(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	backendName := r.URL.Query().Get(":backend")
-	var backend *Backend
+	var backend *backend.Backend
 	if backendName != "" {
 		backend = s.bk[backendName]
 		if backend == nil {

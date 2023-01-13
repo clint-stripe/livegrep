@@ -1,34 +1,18 @@
-package server
+package backend
 
 import (
 	"context"
 	"log"
 	"net/url"
-	"sync"
 	"time"
 
 	pb "github.com/livegrep/livegrep/src/proto/go_proto"
 	"google.golang.org/grpc"
 )
 
-type Tree struct {
-	Name    string
-	Version string
-	Url     string
-}
-
-type I struct {
-	Name  string
-	Trees []Tree
-	sync.Mutex
-	IndexTime time.Time
-}
-
-type Backend struct {
-	Id         string
-	Addr       string
-	I          *I
-	Codesearch pb.CodeSearchClient
+type livegrepBackend struct {
+	Backend
+	codesearch pb.CodeSearchClient
 }
 
 func NewBackend(id string, addr string) (*Backend, error) {
@@ -37,24 +21,30 @@ func NewBackend(id string, addr string) (*Backend, error) {
 		return nil, err
 	}
 	bk := &Backend{
-		Id:         id,
-		Addr:       addr,
-		I:          &I{Name: id},
-		Codesearch: pb.NewCodeSearchClient(client),
+		Id:   id,
+		Addr: addr,
+		I:    &I{Name: id},
+		Searchable: &livegrepBackend{
+			codesearch: pb.NewCodeSearchClient(client),
+		},
 	}
 	return bk, nil
 }
 
-func (bk *Backend) Start() {
+func (bk *livegrepBackend) Search(ctx context.Context, q *pb.Query) (*pb.CodeSearchResult, error) {
+	return bk.codesearch.Search(ctx, q, grpc.FailFast(false))
+}
+
+func (bk *livegrepBackend) Start() {
 	if bk.I == nil {
 		bk.I = &I{Name: bk.Id}
 	}
 	go bk.poll()
 }
 
-func (bk *Backend) poll() {
+func (bk *livegrepBackend) poll() {
 	for {
-		info, e := bk.Codesearch.Info(context.Background(), &pb.InfoRequest{}, grpc.FailFast(false))
+		info, e := bk.codesearch.Info(context.Background(), &pb.InfoRequest{}, grpc.FailFast(false))
 		if e == nil {
 			bk.refresh(info)
 		} else {
@@ -64,7 +54,7 @@ func (bk *Backend) poll() {
 	}
 }
 
-func (bk *Backend) refresh(info *pb.ServerInfo) {
+func (bk *livegrepBackend) refresh(info *pb.ServerInfo) {
 	bk.I.Lock()
 	defer bk.I.Unlock()
 
