@@ -1,0 +1,6 @@
+{
+    "go.toolsEnvVars": {
+        "GOPACKAGESDRIVER": "${workspaceFolder}/.vscode/gopackagesdriver.sh"
+    },
+    "go.useLanguageServer": true
+}
