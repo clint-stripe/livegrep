@@ -320,7 +320,7 @@ func New(cfg *config.Config) (http.Handler, error) {
 		var be *backend.Backend
 		var e error
 		if bk.ZoektBackend {
-			continue
+			be, e = backend.NewZoektBackend(bk.Id, bk.Addr)
 		} else {
 			be, e = backend.NewBackend(bk.Id, bk.Addr)
 		}
