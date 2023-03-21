@@ -16,3 +16,6 @@ vendor/re2/obj/libre2.a
 /bazel-*
 compile_commands.json
 .devbox
+/web/hashes.txt
+/web/htdocs/assets/js/bundle.js
+/web/node_modules/

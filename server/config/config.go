@@ -49,7 +49,8 @@ type Config struct {
 	} `json:"sentry"`
 
 	// Whether to re-load templates on every request
-	Reload bool `json:"reload"`
+	Reload            bool `json:"reload"`
+	IgnoreAssetHashes bool `json:"ignore_asset_hashes"`
 
 	// honeycomb API write key
 	Honeycomb Honeycomb `json:"honeycomb"`

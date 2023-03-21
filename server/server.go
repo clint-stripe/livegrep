@@ -55,7 +55,7 @@ type server struct {
 
 func (s *server) loadTemplates() {
 	s.Templates = make(map[string]*template.Template)
-	err := templates.LoadTemplates(s.config.DocRoot, s.Templates)
+	err := templates.LoadTemplates(s.config.DocRoot, s.Templates, s.config.IgnoreAssetHashes)
 	if err != nil {
 		panic(fmt.Sprintf("loading templates: %v", err))
 	}
