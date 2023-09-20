@@ -10,6 +10,7 @@ module.exports = {
     path: env.outputRoot,
   },
 
+  mode: 'production',
   //devtool: 'eval-cheap-module-source-map',
 
   externals: {
@@ -20,9 +21,15 @@ module.exports = {
   },
 
   module: {
-    loaders: [
-      { test: /\.css$/, loaders: ['style-loader', 'css-loader'] },
-    ]
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+        ],
+      },
+    ],
   },
 
   resolve: {
@@ -35,7 +42,5 @@ module.exports = {
     }
   },
 
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin()
-  ]
+  plugins: [],
 }

@@ -1,5 +1,5 @@
 load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@npm//web:webpack/package_json.bzl", webpack_bin = "bin")
+load("@npm//web:webpack-cli/package_json.bzl", webpack_cli_bin = "bin")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
@@ -27,12 +27,13 @@ js_library(
     deps = [
         ":node_modules/css-loader",
         ":node_modules/style-loader",
+        # ":node_modules/uglifyjs-webpack-plugin",
         ":node_modules/webpack",
         "//web/3d:html",
     ],
 )
 
-webpack_bin.webpack(
+webpack_cli_bin.webpack_cli(
     name = "webpack_build",
     srcs = [
         "webpack.config.js",
@@ -56,7 +57,7 @@ genrule(
         "//web:webpack_build",
     ],
     outs = ["hashes.txt"],
-    cmd = """sha256sum $(SRCS) | sed "s# $(BINDIR)/# #" | sed "s# web/htdocs/# #"> $@""",
+    cmd = """shasum -a 256 $(SRCS) | sed "s# $(BINDIR)/# #" | sed "s# web/htdocs/# #"> $@""",
 )
 
 pkg_tar(
