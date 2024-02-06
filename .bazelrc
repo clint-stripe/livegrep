@@ -4,3 +4,9 @@ build --copt=-DGRPC_BAZEL_BUILD
 # abseil requires at least C++14, as of Jan 2023
 # https://github.com/abseil/abseil-cpp/releases/tag/20230125.3
 build --host_cxxopt=-std=c++14 --cxxopt=-std=c++14
+
+# Our version of com_google_protobuf requires this
+common --incompatible_java_common_parameters=false
+
+# all dependencies are still managed with WORKSPACE
+common --noenable_bzlmod
